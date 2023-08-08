@@ -30,8 +30,6 @@ public class Humano extends Personaje{
         if (dmg > 0) {
             setSalud(getSalud() - dmg);
         }
-        else
-            System.out.println("El ataque no fue efectivo");
     }
 
     @Override
@@ -54,10 +52,14 @@ public class Humano extends Personaje{
 
     @Override
     public void crearPersonaje() {
+        GeneradorDeNumero numero = new GeneradorDeNumero();
         System.out.print("Nombre del Humano: ");
         setNombre(sc.nextLine());
 
         setRaza(Raza.HUMANO);
+        int anio = numero.crearAnio();
+        setNacimiento(numero.generarFechaNacimiento() + anio);
+        setEdad(2023 - anio);
 
         System.out.print("Apodo: ");
         setApodo(sc.nextLine());
@@ -99,7 +101,12 @@ public class Humano extends Personaje{
 
     @Override
     public String mensajesInformativo(int dmg, Personaje personaje) {
-        return getNombre() + " " + getApodo() + " ataca a " + personaje.getNombre() + " " + personaje.getApodo()
-                + " por " + dmg + ". " + personaje.getNombre() + " " + personaje.getApodo() + " queda con " + personaje.getSalud();
+        if (dmg > 0) {
+            return getNombre() + " " + getApodo() + " ataca a " + personaje.getNombre() + " " + personaje.getApodo()
+                    + " por " + dmg + ". " + personaje.getNombre() + " " + personaje.getApodo() + " queda con " + personaje.getSalud() + " de vida";
+        }
+        else {
+            return "El Ataque de "+ getNombre() + " " + getApodo() + " no fue efectivo, " + personaje.getNombre() + " " + personaje.getApodo() + " sigue con "+ personaje.getSalud() + " de vida";
+        }
     }
 }

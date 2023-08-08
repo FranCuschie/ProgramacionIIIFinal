@@ -10,9 +10,10 @@ public class Main {
     public static void main(String[] args) throws IOException {
         Scanner sc = new Scanner(System.in);
         Logger logger = Logger.getLogger("WarCard");
-        FileHandler fh = new FileHandler("WarCard.log");
+        FileHandler fh = new FileHandler("WarCard.log", true);
 
         SimpleFormatter formatter = new SimpleFormatter();
+
         fh.setFormatter(formatter);
         logger.addHandler(fh);
 
@@ -44,7 +45,7 @@ public class Main {
                 } catch (InputMismatchException e) {
                     validador = true;
                     sc.nextLine();
-                    System.out.println("Opcion invalida!");
+                    logger.warning("Opcion invalida!");
                 }
             } while (validador);
             try {
@@ -53,7 +54,6 @@ public class Main {
                         JugadorUnoCartas.clear();
                         JugadorDosCartas.clear();
                         logger.info("Preparativos para la guerra!");
-                        System.out.println("Preparativos para la guerra!");
                         // Creo cartas random para jugador UNO
                         elfo.personajeAleatorio();
                         orco.personajeAleatorio();
@@ -90,34 +90,6 @@ public class Main {
                         ganador(JugadorUnoCartas, JugadorDosCartas);
                         enterParaContinuar();
                         break;
-                            /* VERCION VIEJA QUE NO ANDABA
-                            if (JugadorUnoCartas.size() == JugadorDosCartas.size()) {
-                                System.out.println("Tienen la misma cantidad de cartas, La ronda se sorteara!");
-                                int numero = random.generarNumeroUnoCien();
-                                if (numero > 50){
-                                    System.out.println("Arranca el jugador UNO");
-                                    System.out.println("-------------------------------------------------------------");
-                                    ronda(JugadorUnoCartas, JugadorDosCartas);
-                                }
-                                else{
-                                    System.out.println("Arranca el jugador DOS");
-                                    System.out.println("-------------------------------------------------------------");
-                                    ronda(JugadorDosCartas, JugadorUnoCartas);
-                                }
-                            }
-                            if (JugadorUnoCartas.size() > JugadorDosCartas.size()) {
-                                System.out.println("Como el jugador uno tiene mas cartas que el jugador DOS");
-                                System.out.println("Arranca el jugador DOS");
-                                System.out.println("-------------------------------------------------------------");
-                                ronda(JugadorDosCartas, JugadorUnoCartas);
-                                break;
-                            }
-                            if (JugadorDosCartas.size() > JugadorUnoCartas.size()){
-                                System.out.println("Como el jugador DOS tiene mas cartas que el jugador UNO");
-                                System.out.println("Arranca el jugador UNO");
-                                System.out.println("-------------------------------------------------------------");
-                                ronda(JugadorUnoCartas, JugadorDosCartas);
-                            } */
 
                     case 2: // Iniciar partida pero los personajes los ingresa el usuario
                         JugadorUnoCartas.clear();
@@ -132,7 +104,8 @@ public class Main {
                             menu = sc.nextInt();
                             switch (menu) {
                                 case 1 -> { // Elfo
-                                    elfo.crearPersonaje();
+                                    Elfo elfo1 = new Elfo();
+                                    elfo1.crearPersonaje();
                                     JugadorUnoCartas.add(elfo);
                                 }
                                 case 2 -> { // Orco
@@ -152,6 +125,7 @@ public class Main {
                             System.out.println("1)Elfo 2)Orco 3)Humano");
                             System.out.print("Eleccion: ");
                             menu = sc.nextInt();
+
                             switch (menu) {
                                 case 1 -> { // Elfo
                                     elfo.crearPersonaje();
@@ -187,13 +161,15 @@ public class Main {
                     case 3: // Leer desde el archivo los LOGS de TODAS las partidas jugadas
 
                     case 4: // Borar archivo de LOGS
+                        System.out.println("Se borro el historial correctamente");
+                        break;
 
                     case 0: // Salir
                         System.out.println("Thanks for playing!");
                         break;
                 }
             } catch (InputMismatchException e) {
-                System.out.println("Opcion invalida!");
+                logger.info("Opcion invalida!");
             }
         } while (menu !=0);
 
@@ -202,8 +178,9 @@ public class Main {
     // METODOS PARA EL MENU
 
     public static void mostrarCartasJugador(ArrayList<Personaje> ArrayList) {
+        Logger logger = Logger.getLogger("WarCard");
         for (Personaje carta : ArrayList) {
-            System.out.println(carta.imprimirPersonajes());
+            logger.info(carta.imprimirPersonajes());
         }
     }
 
@@ -228,12 +205,14 @@ public class Main {
     }
 
     public static void eliminarCarta(ArrayList<Personaje> ArrayList, int carta){
-        System.out.println(ArrayList.get(carta).getNombre() + " " + ArrayList.get(carta).getApodo() + " quedo fuera de combate");
+        Logger logger = Logger.getLogger("WarCard");
+        logger.info(ArrayList.get(carta).getNombre() + " " + ArrayList.get(carta).getApodo() + " quedo fuera de combate");
         ArrayList.remove(carta);
     }
 
     // ATACA PRIMERO LA PRIMERA ARRAYLIST
     public static void ronda(ArrayList<Personaje> ArrayList1, ArrayList<Personaje> ArrayList2){
+        Logger logger = Logger.getLogger("WarCard");
         int ataques = 0;
         int carta1 = cartaElegida(ArrayList1);
         int carta2 = cartaElegida(ArrayList2);
@@ -241,9 +220,8 @@ public class Main {
             // Ataca jugador UNO
             int dmg = ArrayList1.get(carta1).danioProvocado(ArrayList2.get(carta2));
             ArrayList2.get(carta2).restarSalud(dmg);
-            ataques = ataques + 1;
             // Mensaje info
-            System.out.println(ArrayList1.get(carta1).mensajesInformativo(dmg, ArrayList2.get(carta2)));
+            logger.info(ArrayList1.get(carta1).mensajesInformativo(dmg, ArrayList2.get(carta2)));
             if (ArrayList2.get(carta2).getSalud() <= 0){
                 eliminarCarta(ArrayList2, carta2);
                 break;
@@ -254,13 +232,16 @@ public class Main {
             ArrayList1.get(carta1).restarSalud(dmg2);
 
             // Mensaje info
-            System.out.println(ArrayList2.get(carta2).mensajesInformativo(dmg2, ArrayList1.get(carta1)));
+            logger.info(ArrayList2.get(carta2).mensajesInformativo(dmg2, ArrayList1.get(carta1)));
             if (ArrayList1.get(carta1).getSalud() <= 0){
                 eliminarCarta(ArrayList1, carta1);
                 break;
             }
             ataques = ataques + 1;
-
+            if (ataques == 8)
+            {
+                logger.info("El combate a terminado, ningun personaje a muerto.");
+            }
 
         } while ((ataques <7));
     }
@@ -283,163 +264,48 @@ public class Main {
     }
 
     public static void tiposDeRondas(ArrayList<Personaje> JugadorUnoCartas, ArrayList<Personaje> JugadorDosCartas){
+        Logger logger = Logger.getLogger("WarCard");
         GeneradorDeNumero random = new GeneradorDeNumero();
         switch (condicionalSwitch(JugadorUnoCartas, JugadorDosCartas)) {
             case 1: // Caso cartas IGUALES
-                System.out.println("Tienen la misma cantidad de cartas, La ronda se sorteara!");
+                logger.info("Tienen la misma cantidad de cartas, La ronda se sorteara!");
                 int numero = random.generarNumeroUnoCien();
                 if (numero > 50) {
-                    System.out.println("Arranca el jugador UNO");
-                    System.out.println("-------------------------------------------------------------");
+                    logger.info("Arranca el jugador UNO");
+                    logger.info("-------------------------------------------------------------");
                     ronda(JugadorUnoCartas, JugadorDosCartas);
                 } else {
-                    System.out.println("Arranca el jugador DOS");
-                    System.out.println("-------------------------------------------------------------");
+                    logger.info("Arranca el jugador DOS");
+                    logger.info("-------------------------------------------------------------");
                     ronda(JugadorDosCartas, JugadorUnoCartas);
                 }
                 break;
             case 2: // Caso en el que el jugador UNO tenga mas cartas
-                System.out.println("Como el jugador uno tiene mas cartas que el jugador DOS");
-                System.out.println("Arranca el jugador DOS");
-                System.out.println("-------------------------------------------------------------");
+                logger.info("Como el jugador uno tiene mas cartas que el jugador DOS");
+                logger.info("Arranca el jugador DOS");
+                logger.info("-------------------------------------------------------------");
                 ronda(JugadorDosCartas, JugadorUnoCartas);
                 break;
             case 3: // Caso en el que el jugador DOS tenga mas cartas
-                System.out.println("Como el jugador DOS tiene mas cartas que el jugador UNO");
-                System.out.println("Arranca el jugador UNO");
-                System.out.println("-------------------------------------------------------------");
+                logger.info("Como el jugador DOS tiene mas cartas que el jugador UNO");
+                logger.info("Arranca el jugador UNO");
+                logger.info("-------------------------------------------------------------");
                 ronda(JugadorUnoCartas, JugadorDosCartas);
                 break;
         }
     }
 
     public static void ganador(ArrayList<Personaje> ArrayList1, ArrayList<Personaje> ArrayList2){
-        System.out.println("Felicidades al ganador del trono de Hierro!");
-        System.out.println("Nuestros campeones :");
+        Logger logger = Logger.getLogger("WarCard");
         if (ArrayList1.size() > ArrayList2.size()){
+            logger.info("Felicitaciones al JUGADOR UNO por el trono de Hierro!");
+            logger.info("Nuestros campeones :");
             mostrarCartasJugador(ArrayList1);
         }
         if (ArrayList2.size() > ArrayList1.size()){
+            logger.info("Felicitaciones al JUGADOR DOS por el trono de Hierro!");
+            logger.info("Nuestros campeones :");
             mostrarCartasJugador(ArrayList2);
-        }
-    }
-
-    public static void rondaJugadorDos(ArrayList<Personaje> ArrayList1, ArrayList<Personaje> ArrayList2){
-        int ataques = 0;
-        int carta1 = cartaElegida(ArrayList1);
-        int carta2 = cartaElegida(ArrayList2);
-        do {
-            // Ataca jugador DOS
-            int dmg2 = ArrayList2.get(carta2).danioProvocado(ArrayList1.get(carta1));
-            ArrayList1.get(carta1).restarSalud(dmg2);
-            System.out.println(dmg2);
-            // Mensaje info
-            System.out.println(ArrayList2.get(carta2).mensajesInformativo(dmg2, ArrayList1.get(carta1)));
-            if (ArrayList1.get(carta1).getSalud() <= 0){
-                eliminarCarta(ArrayList1, carta1);
-                break;
-            }
-            ataques = ataques + 1;
-
-            // Ataca jugador UNO
-            int dmg = ArrayList1.get(carta1).danioProvocado(ArrayList2.get(carta2));
-            ArrayList2.get(carta2).restarSalud(dmg);
-            System.out.println(dmg);
-            // Mensaje info
-            System.out.println(ArrayList1.get(carta1).mensajesInformativo(dmg,ArrayList2.get(carta2)));
-            if (ArrayList2.get(carta2).getSalud() <= 0){
-                eliminarCarta(ArrayList2, carta2);
-                break;
-            }
-            ataques = ataques + 1;
-
-            //JugadorDosCartas.get(carta2).restarSalud(JugadorUnoCartas.get(carta1));
-            //System.out.println(JugadorUnoCartas.get(carta1).mensajesInformativo(JugadorDosCartas.get(carta2)));
-
-            //JugadorDosCartas.get(carta2).restarSalud(JugadorUnoCartas.get(carta1));
-            //System.out.println(JugadorUnoCartas.get(carta1).mensajesInformativo(JugadorDosCartas.get(carta2)));
-        } while (ataques <=7 || (ArrayList1.size() > ArrayList2.size() || ArrayList2.size() > ArrayList1.size()));
-    }
-
-    public static void rondaRandom(ArrayList<Personaje> ArrayList1, ArrayList<Personaje> ArrayList2){
-        GeneradorDeNumero numero = new GeneradorDeNumero();
-
-        int ataques = 0;
-        int carta1 = cartaElegida(ArrayList1);
-        int carta2 = cartaElegida(ArrayList2);
-
-        System.out.println("La carta del Jugador UNO elegida para pelear es:\n" + ArrayList1.get(carta1).imprimirPersonajes());
-        System.out.println("La carta del Jugador DOS elegida para pelear es:\n" + ArrayList2.get(carta2).imprimirPersonajes());
-        if (numero.generarNumeroUnoCien() <= 50){
-            System.out.println("Comienza el jugador UNO atacando!");
-            do {
-
-                // Ataca jugador UNO
-                int dmg = ArrayList1.get(carta1).danioProvocado(ArrayList2.get(carta2));
-                System.out.println(dmg);
-                ArrayList2.get(carta2).restarSalud(dmg);
-
-                // Mensaje info
-                System.out.println(ArrayList1.get(carta1).mensajesInformativo(dmg, ArrayList2.get(carta2)));
-                if (ArrayList2.get(carta2).getSalud() <= 0){
-                    eliminarCarta(ArrayList2, carta2);
-                    break;
-                }
-                ataques = ataques + 1;
-
-                // Ataca jugador DOS
-                int dmg2 = ArrayList2.get(carta2).danioProvocado(ArrayList1.get(carta1));
-                ArrayList1.get(carta1).restarSalud(dmg2);
-                System.out.println(dmg2);
-                // Mensaje info
-                System.out.println(ArrayList2.get(carta2).mensajesInformativo(dmg2, ArrayList1.get(carta1)));
-                if (ArrayList1.get(carta1).getSalud() <= 0){
-                    eliminarCarta(ArrayList1, carta1);
-                    break;
-                }
-                ataques = ataques + 1;
-
-                //JugadorDosCartas.get(carta2).restarSalud(JugadorUnoCartas.get(carta1));
-                //System.out.println(JugadorUnoCartas.get(carta1).mensajesInformativo(JugadorDosCartas.get(carta2)));
-
-                //JugadorUnoCartas.get(carta2).restarSalud(JugadorUnoCartas.get(carta1));
-                //System.out.println(JugadorUnoCartas.get(carta1).mensajesInformativo(JugadorDosCartas.get(carta2)));
-
-            } while (ataques <=7);
-        }
-        else {
-            System.out.println("Comienza el jugador DOS atacando!");
-            do {
-                // Ataca jugador DOS
-                int dmg2 = ArrayList2.get(carta2).danioProvocado(ArrayList1.get(carta1));
-                ArrayList1.get(carta1).restarSalud(dmg2);
-                System.out.println(dmg2);
-                // Mensaje info
-                System.out.println(ArrayList2.get(carta2).mensajesInformativo(dmg2, ArrayList1.get(carta1)));
-                if (ArrayList1.get(carta1).getSalud() <= 0){
-                    eliminarCarta(ArrayList1, carta1);
-                    break;
-                }
-                ataques = ataques + 1;
-
-                // Ataca jugador UNO
-                int dmg = ArrayList1.get(carta1).danioProvocado(ArrayList2.get(carta2));
-                ArrayList2.get(carta2).restarSalud(dmg);
-                System.out.println(dmg);
-                // Mensaje info
-                System.out.println(ArrayList1.get(carta1).mensajesInformativo(dmg,ArrayList2.get(carta2)));
-                if (ArrayList2.get(carta2).getSalud() <= 0){
-                    eliminarCarta(ArrayList2, carta2);
-                    break;
-                }
-                ataques = ataques + 1;
-
-                //JugadorDosCartas.get(carta2).restarSalud(JugadorUnoCartas.get(carta1));
-                //System.out.println(JugadorUnoCartas.get(carta1).mensajesInformativo(JugadorDosCartas.get(carta2)));
-
-                //JugadorDosCartas.get(carta2).restarSalud(JugadorUnoCartas.get(carta1));
-                //System.out.println(JugadorUnoCartas.get(carta1).mensajesInformativo(JugadorDosCartas.get(carta2)));
-            } while (ataques <=7 || (ArrayList1.size() > ArrayList2.size() || ArrayList2.size() > ArrayList1.size()));
         }
     }
 }
