@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 public class Humano extends Personaje{
     Scanner sc = new Scanner(System.in);
@@ -33,54 +34,69 @@ public class Humano extends Personaje{
     }
 
     @Override
-    public void personajeAleatorio() {
+    public void recuperarSalud() {
+        Logger logger = Logger.getLogger("WarCard");
         GeneradorDeNumero numero = new GeneradorDeNumero();
-        GeneradorDeNombre nombre = new GeneradorDeNombre();
-        setNombre(nombre.nombreAleatorio());
-        setRaza(Raza.HUMANO);
-        setApodo(nombre.apodoAleatorio());
-        int anio = numero.crearAnio();
-        setNacimiento(numero.generarFechaNacimiento() + anio);
-        setEdad(2023 - anio);
-        setSalud(100);
-        setVelocidad(numero.generarNumeroUnoDiez());
-        setDestreza(numero.generarNumeroUnoCinco());
-        setFuerza(numero.generarNumeroUnoDiez());
-        setLvl(numero.generarNumeroUnoDiez());
-        setArmadura(numero.generarNumeroUnoDiez());
+        int vida = numero.generarNumeroUnoDiez();
+        setSalud(getSalud()+vida);
+        logger.info(getNombre() + " " + getApodo() + " Recupero " + vida + " de vida por ganar la ronda!");
     }
 
     @Override
-    public void crearPersonaje() {
+    public Personaje personajeAleatorio() {
+        Humano humano = new Humano();
+        GeneradorDeNumero numero = new GeneradorDeNumero();
+        GeneradorDeNombre nombre = new GeneradorDeNombre();
+        humano.setNombre(nombre.nombreAleatorio());
+        humano.setRaza(Raza.HUMANO);
+        humano.setApodo(nombre.apodoAleatorio());
+        int anio = numero.crearAnio();
+        humano.setNacimiento(numero.generarFechaNacimiento() + anio);
+        humano.setEdad(2023 - anio);
+        humano.setSalud(100);
+        humano.setVelocidad(numero.generarNumeroUnoDiez());
+        humano.setDestreza(numero.generarNumeroUnoCinco());
+        humano.setFuerza(numero.generarNumeroUnoDiez());
+        humano.setLvl(numero.generarNumeroUnoDiez());
+        humano.setArmadura(numero.generarNumeroUnoDiez());
+
+        return humano;
+    }
+
+    @Override
+    public Personaje crearPersonaje() {
+        Humano humano = new Humano();
         GeneradorDeNumero numero = new GeneradorDeNumero();
         System.out.print("Nombre del Humano: ");
-        setNombre(sc.nextLine());
+        humano.setNombre(sc.nextLine());
 
-        setRaza(Raza.HUMANO);
+        humano.setRaza(Raza.HUMANO);
         int anio = numero.crearAnio();
-        setNacimiento(numero.generarFechaNacimiento() + anio);
-        setEdad(2023 - anio);
+        humano.setNacimiento(numero.generarFechaNacimiento() + anio);
+        humano.setEdad(2023 - anio);
 
         System.out.print("Apodo: ");
-        setApodo(sc.nextLine());
+        humano.setApodo(sc.nextLine());
 
         System.out.print("Salud: ");
-        setSalud(sc.nextInt());
+        humano.setSalud(sc.nextInt());
 
         System.out.print("Velocidad: ");
-        setVelocidad(sc.nextInt());
+        humano.setVelocidad(sc.nextInt());
 
         System.out.print("Destreza: ");
-        setDestreza(sc.nextInt());
+        humano.setDestreza(sc.nextInt());
 
         System.out.print("Fuerza: ");
-        setFuerza(sc.nextInt());
+        humano.setFuerza(sc.nextInt());
 
         System.out.print("Nivel: ");
-        setLvl(sc.nextInt());
+        humano.setLvl(sc.nextInt());
 
         System.out.print("Armandura:");
-        setArmadura(sc.nextInt());
+        humano.setArmadura(sc.nextInt());
+
+        return humano;
     }
 
     @Override

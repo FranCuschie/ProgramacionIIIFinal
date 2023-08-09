@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 public class Elfo extends Personaje{
     Scanner sc = new Scanner(System.in);
@@ -31,54 +32,69 @@ public class Elfo extends Personaje{
     }
 
     @Override
-    public void personajeAleatorio() {
+    public void recuperarSalud() {
+        Logger logger = Logger.getLogger("WarCard");
         GeneradorDeNumero numero = new GeneradorDeNumero();
-        GeneradorDeNombre nombre = new GeneradorDeNombre();
-        setNombre(nombre.nombreAleatorio());
-        setRaza(Raza.ELFO);
-        setApodo(nombre.apodoAleatorio());
-        int anio = numero.crearAnio();
-        setNacimiento(numero.generarFechaNacimiento() + anio);
-        setEdad(2023 - anio);
-        setSalud(100);
-        setVelocidad(numero.generarNumeroUnoDiez());
-        setDestreza(numero.generarNumeroUnoCinco());
-        setFuerza(numero.generarNumeroUnoDiez());
-        setLvl(numero.generarNumeroUnoDiez());
-        setArmadura(numero.generarNumeroUnoDiez());
+        int vida = numero.generarNumeroUnoDiez();
+        setSalud(getSalud()+vida);
+        logger.info(getNombre() + " " + getApodo() + " Recupero " + vida + " de vida por ganar la ronda!");
     }
 
     @Override
-    public void crearPersonaje() {
+    public Personaje personajeAleatorio() {
+        Elfo elfo = new Elfo();
+        GeneradorDeNumero numero = new GeneradorDeNumero();
+        GeneradorDeNombre nombre = new GeneradorDeNombre();
+        elfo.setNombre(nombre.nombreAleatorio());
+        elfo.setRaza(Raza.ELFO);
+        elfo.setApodo(nombre.apodoAleatorio());
+        int anio = numero.crearAnio();
+        elfo.setNacimiento(numero.generarFechaNacimiento() + anio);
+        elfo.setEdad(2023 - anio);
+        elfo.setSalud(100);
+        elfo.setVelocidad(numero.generarNumeroUnoDiez());
+        elfo.setDestreza(numero.generarNumeroUnoCinco());
+        elfo.setFuerza(numero.generarNumeroUnoDiez());
+        elfo.setLvl(numero.generarNumeroUnoDiez());
+        elfo.setArmadura(numero.generarNumeroUnoDiez());
+
+        return elfo;
+    }
+
+    @Override
+    public Personaje crearPersonaje() {
+        Elfo elfo = new Elfo();
         GeneradorDeNumero numero = new GeneradorDeNumero();
         System.out.print("Nombre del Elfo: ");
-        setNombre(sc.nextLine());
+        elfo.setNombre(sc.nextLine());
 
-        setRaza(Raza.ELFO);
+        elfo.setRaza(Raza.ELFO);
         int anio = numero.crearAnio();
-        setNacimiento(numero.generarFechaNacimiento() + anio);
-        setEdad(2023 - anio);
+        elfo.setNacimiento(numero.generarFechaNacimiento() + anio);
+        elfo.setEdad(2023 - anio);
 
         System.out.print("Apodo: ");
         setApodo(sc.nextLine());
 
         System.out.print("Salud: ");
-        setSalud(sc.nextInt());
+        elfo.setSalud(sc.nextInt());
 
         System.out.print("Velocidad: ");
-        setVelocidad(sc.nextInt());
+        elfo.setVelocidad(sc.nextInt());
 
         System.out.print("Destreza: ");
-        setDestreza(sc.nextInt());
+        elfo.setDestreza(sc.nextInt());
 
         System.out.print("Fuerza: ");
-        setFuerza(sc.nextInt());
+        elfo.setFuerza(sc.nextInt());
 
         System.out.print("Nivel: ");
-        setLvl(sc.nextInt());
+        elfo.setLvl(sc.nextInt());
 
         System.out.print("Armandura:");
-        setArmadura(sc.nextInt());
+        elfo.setArmadura(sc.nextInt());
+
+        return elfo;
     }
 
     @Override

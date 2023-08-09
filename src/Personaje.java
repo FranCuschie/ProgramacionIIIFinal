@@ -124,8 +124,9 @@ public abstract class Personaje {
     public abstract int poderDeDefensa();
     public abstract int danioProvocado(Personaje personaje);
     public abstract void restarSalud(int dmg);
-    public abstract void personajeAleatorio();
-    public abstract void crearPersonaje();
+    public abstract void recuperarSalud();
+    public abstract Personaje personajeAleatorio();
+    public abstract Personaje crearPersonaje();
     public abstract String imprimirPersonajes();
 
     public abstract String mensajesInformativo(int dmg, Personaje personaje);

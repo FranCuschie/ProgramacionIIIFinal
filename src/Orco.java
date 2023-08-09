@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 public class Orco extends Personaje{
     Scanner sc = new Scanner(System.in);
@@ -33,54 +34,69 @@ public class Orco extends Personaje{
     }
 
     @Override
-    public void personajeAleatorio() {
+    public void recuperarSalud() {
+        Logger logger = Logger.getLogger("WarCard");
         GeneradorDeNumero numero = new GeneradorDeNumero();
-        GeneradorDeNombre nombre = new GeneradorDeNombre();
-        setNombre(nombre.nombreAleatorio());
-        setRaza(Raza.ORCO);
-        setApodo(nombre.apodoAleatorio());
-        int anio = numero.crearAnio();
-        setNacimiento(numero.generarFechaNacimiento() + anio);
-        setEdad(2023 - anio);
-        setSalud(100);
-        setVelocidad(numero.generarNumeroUnoDiez());
-        setDestreza(numero.generarNumeroUnoCinco());
-        setFuerza(numero.generarNumeroUnoDiez());
-        setLvl(numero.generarNumeroUnoDiez());
-        setArmadura(numero.generarNumeroUnoDiez());
+        int vida = numero.generarNumeroUnoDiez();
+        setSalud(getSalud()+vida);
+        logger.info(getNombre() + " " + getApodo() + " Recupero " + vida + " de vida por ganar la ronda!");
     }
 
     @Override
-    public void crearPersonaje() {
+    public Personaje personajeAleatorio() {
+        Orco orco =  new Orco();
+        GeneradorDeNumero numero = new GeneradorDeNumero();
+        GeneradorDeNombre nombre = new GeneradorDeNombre();
+        orco.setNombre(nombre.nombreAleatorio());
+        orco.setRaza(Raza.ORCO);
+        orco.setApodo(nombre.apodoAleatorio());
+        int anio = numero.crearAnio();
+        orco.setNacimiento(numero.generarFechaNacimiento() + anio);
+        orco.setEdad(2023 - anio);
+        orco.setSalud(100);
+        orco.setVelocidad(numero.generarNumeroUnoDiez());
+        orco.setDestreza(numero.generarNumeroUnoCinco());
+        orco.setFuerza(numero.generarNumeroUnoDiez());
+        orco.setLvl(numero.generarNumeroUnoDiez());
+        orco.setArmadura(numero.generarNumeroUnoDiez());
+
+        return orco;
+    }
+
+    @Override
+    public Personaje crearPersonaje() {
+        Orco orco = new Orco();
         GeneradorDeNumero numero = new GeneradorDeNumero();
         System.out.print("Nombre del Orco: ");
-        setNombre(sc.nextLine());
+        orco.setNombre(sc.nextLine());
 
-        setRaza(Raza.ORCO);
+        orco.setRaza(Raza.ORCO);
         int anio = numero.crearAnio();
         setNacimiento(numero.generarFechaNacimiento() + anio);
-        setEdad(2023 - anio);
+        orco.setEdad(2023 - anio);
 
         System.out.print("Apodo: ");
-        setApodo(sc.nextLine());
+        orco.setApodo(sc.nextLine());
 
         System.out.print("Salud: ");
-        setSalud(sc.nextInt());
+        orco.setSalud(sc.nextInt());
 
         System.out.print("Velocidad: ");
         setVelocidad(sc.nextInt());
 
         System.out.print("Destreza: ");
-        setDestreza(sc.nextInt());
+        orco.setDestreza(sc.nextInt());
 
         System.out.print("Fuerza: ");
-        setFuerza(sc.nextInt());
+        orco.setFuerza(sc.nextInt());
 
         System.out.print("Nivel: ");
-        setLvl(sc.nextInt());
+        orco.setLvl(sc.nextInt());
 
         System.out.print("Armandura:");
-        setArmadura(sc.nextInt());
+        orco.setArmadura(sc.nextInt());
+
+        return orco;
     }
 
     @Override

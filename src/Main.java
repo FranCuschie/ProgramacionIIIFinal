@@ -1,3 +1,6 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
@@ -10,12 +13,11 @@ public class Main {
     public static void main(String[] args) throws IOException {
         Scanner sc = new Scanner(System.in);
         Logger logger = Logger.getLogger("WarCard");
-        FileHandler fh = new FileHandler("WarCard.log", true);
 
+        File file = new File("WarCard.log");
+        FileReader archivo;
+        BufferedReader lector;
         SimpleFormatter formatter = new SimpleFormatter();
-
-        fh.setFormatter(formatter);
-        logger.addHandler(fh);
 
         ArrayList<Personaje> JugadorUnoCartas = new ArrayList<>();
         ArrayList<Personaje> JugadorDosCartas = new ArrayList<>();
@@ -26,10 +28,10 @@ public class Main {
         Orco orco = new Orco();
         Humano humano = new Humano();
 
-        Elfo elfo2 = new Elfo();
-        Orco orco2 = new Orco();
-        Humano humano2 = new Humano();
         do {
+            FileHandler fh = new FileHandler("WarCard.log", true);
+            fh.setFormatter(formatter);
+            logger.addHandler(fh);
             int ronda = 1;
             do {
                 validador = false;
@@ -55,20 +57,14 @@ public class Main {
                         JugadorDosCartas.clear();
                         logger.info("Preparativos para la guerra!");
                         // Creo cartas random para jugador UNO
-                        elfo.personajeAleatorio();
-                        orco.personajeAleatorio();
-                        humano.personajeAleatorio();
-                        JugadorUnoCartas.add(elfo);
-                        JugadorUnoCartas.add(orco);
-                        JugadorUnoCartas.add(humano);
+                        JugadorUnoCartas.add(elfo.personajeAleatorio());
+                        JugadorUnoCartas.add(orco.personajeAleatorio());
+                        JugadorUnoCartas.add(humano.personajeAleatorio());
 
                         // Creo cartas random para jugador DOS
-                        elfo2.personajeAleatorio();
-                        orco2.personajeAleatorio();
-                        humano2.personajeAleatorio();
-                        JugadorDosCartas.add(elfo2);
-                        JugadorDosCartas.add(orco2);
-                        JugadorDosCartas.add(humano2);
+                        JugadorDosCartas.add(elfo.personajeAleatorio());
+                        JugadorDosCartas.add(orco.personajeAleatorio());
+                        JugadorDosCartas.add(humano.personajeAleatorio());
 
                         System.out.println("Cartas del Jugador UNO:");
                         mostrarCartasJugador(JugadorUnoCartas);
@@ -94,7 +90,7 @@ public class Main {
                     case 2: // Iniciar partida pero los personajes los ingresa el usuario
                         JugadorUnoCartas.clear();
                         JugadorDosCartas.clear();
-                        System.out.println("Partida custom, Eliga sus personajes");
+                        System.out.println("Partida custom, Elija sus personajes");
                         do {
                             System.out.println("Jugador UNO le toca crear sus tres cartas");
                             System.out.println("Numero de cartas del jugador UNO: " + JugadorUnoCartas.size());
@@ -103,19 +99,12 @@ public class Main {
                             System.out.print("Eleccion: ");
                             menu = sc.nextInt();
                             switch (menu) {
-                                case 1 -> { // Elfo
-                                    Elfo elfo1 = new Elfo();
-                                    elfo1.crearPersonaje();
-                                    JugadorUnoCartas.add(elfo);
-                                }
-                                case 2 -> { // Orco
-                                    orco.crearPersonaje();
-                                    JugadorUnoCartas.add(orco);
-                                }
-                                case 3 -> { // Humano
-                                    humano.crearPersonaje();
-                                    JugadorUnoCartas.add(humano);
-                                }
+                                case 1 -> // Elfo
+                                        JugadorUnoCartas.add(elfo.crearPersonaje());
+                                case 2 -> // Orco
+                                        JugadorUnoCartas.add(orco.crearPersonaje());
+                                case 3 -> // Humano
+                                        JugadorUnoCartas.add(humano.crearPersonaje());
                             }
                         } while (JugadorUnoCartas.size() < 3);
                         do {
@@ -127,18 +116,12 @@ public class Main {
                             menu = sc.nextInt();
 
                             switch (menu) {
-                                case 1 -> { // Elfo
-                                    elfo.crearPersonaje();
-                                    JugadorDosCartas.add(elfo);
-                                }
-                                case 2 -> { // Orco
-                                    orco.crearPersonaje();
-                                    JugadorDosCartas.add(orco);
-                                }
-                                case 3 -> { // Humano
-                                    humano.crearPersonaje();
-                                    JugadorDosCartas.add(humano);
-                                }
+                                case 1 -> // Elfo
+                                        JugadorDosCartas.add(elfo.crearPersonaje());
+                                case 2 -> // Orco
+                                        JugadorDosCartas.add(orco.crearPersonaje());
+                                case 3 -> // Humano
+                                        JugadorDosCartas.add(humano.crearPersonaje());
                             }
                         } while (JugadorDosCartas.size() < 3);
                         enterParaContinuar();
@@ -159,8 +142,26 @@ public class Main {
                         enterParaContinuar();
 
                     case 3: // Leer desde el archivo los LOGS de TODAS las partidas jugadas
-
+                        try{
+                            fh.close();
+                            archivo = new FileReader("WarCard.log");
+                            if (archivo.ready()) {
+                                lector = new BufferedReader(archivo);
+                                String lineas;
+                                while ((lineas = lector.readLine()) != null){
+                                    System.out.println(lineas);
+                                }
+                            } else {
+                                System.out.println("No hay un historial de partidas.");
+                            }
+                            break;
+                        } catch (Exception e){
+                            System.out.println("Error");
+                            break;
+                        }
                     case 4: // Borar archivo de LOGS
+                        fh.close();
+                        file.delete();
                         System.out.println("Se borro el historial correctamente");
                         break;
 
@@ -169,7 +170,7 @@ public class Main {
                         break;
                 }
             } catch (InputMismatchException e) {
-                logger.info("Opcion invalida!");
+                logger.warning("Opcion invalida!");
             }
         } while (menu !=0);
 
@@ -224,6 +225,7 @@ public class Main {
             logger.info(ArrayList1.get(carta1).mensajesInformativo(dmg, ArrayList2.get(carta2)));
             if (ArrayList2.get(carta2).getSalud() <= 0){
                 eliminarCarta(ArrayList2, carta2);
+                ArrayList1.get(carta1).recuperarSalud();
                 break;
             }
 
@@ -235,6 +237,7 @@ public class Main {
             logger.info(ArrayList2.get(carta2).mensajesInformativo(dmg2, ArrayList1.get(carta1)));
             if (ArrayList1.get(carta1).getSalud() <= 0){
                 eliminarCarta(ArrayList1, carta1);
+                ArrayList2.get(carta2).recuperarSalud();
                 break;
             }
             ataques = ataques + 1;
@@ -243,7 +246,7 @@ public class Main {
                 logger.info("El combate a terminado, ningun personaje a muerto.");
             }
 
-        } while ((ataques <7));
+        } while ((ataques <8));
     }
 
     // CONDICIONAL PARA EL SWITCH
@@ -267,7 +270,7 @@ public class Main {
         Logger logger = Logger.getLogger("WarCard");
         GeneradorDeNumero random = new GeneradorDeNumero();
         switch (condicionalSwitch(JugadorUnoCartas, JugadorDosCartas)) {
-            case 1: // Caso cartas IGUALES
+            case 1 -> { // Caso cartas IGUALES
                 logger.info("Tienen la misma cantidad de cartas, La ronda se sorteara!");
                 int numero = random.generarNumeroUnoCien();
                 if (numero > 50) {
@@ -279,31 +282,31 @@ public class Main {
                     logger.info("-------------------------------------------------------------");
                     ronda(JugadorDosCartas, JugadorUnoCartas);
                 }
-                break;
-            case 2: // Caso en el que el jugador UNO tenga mas cartas
+            }
+            case 2 -> { // Caso en el que el jugador UNO tenga mas cartas
                 logger.info("Como el jugador uno tiene mas cartas que el jugador DOS");
                 logger.info("Arranca el jugador DOS");
                 logger.info("-------------------------------------------------------------");
                 ronda(JugadorDosCartas, JugadorUnoCartas);
-                break;
-            case 3: // Caso en el que el jugador DOS tenga mas cartas
+            }
+            case 3 -> { // Caso en el que el jugador DOS tenga mas cartas
                 logger.info("Como el jugador DOS tiene mas cartas que el jugador UNO");
                 logger.info("Arranca el jugador UNO");
                 logger.info("-------------------------------------------------------------");
                 ronda(JugadorUnoCartas, JugadorDosCartas);
-                break;
+            }
         }
     }
 
     public static void ganador(ArrayList<Personaje> ArrayList1, ArrayList<Personaje> ArrayList2){
         Logger logger = Logger.getLogger("WarCard");
         if (ArrayList1.size() > ArrayList2.size()){
-            logger.info("Felicitaciones al JUGADOR UNO por el trono de Hierro!");
+            logger.info("Felicitaciones al JUGADOR UNO por ser el ganador del Trono de Hierro!");
             logger.info("Nuestros campeones :");
             mostrarCartasJugador(ArrayList1);
         }
         if (ArrayList2.size() > ArrayList1.size()){
-            logger.info("Felicitaciones al JUGADOR DOS por el trono de Hierro!");
+            logger.info("Felicitaciones al JUGADOR DOS por ser el ganador del Trono de Hierro!");
             logger.info("Nuestros campeones :");
             mostrarCartasJugador(ArrayList2);
         }
